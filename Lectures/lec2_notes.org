@@ -1,0 +1,47 @@
+* [ Concurrency vs Parallelism ]
+**        [1] Concurrency kör A en kort tid, sen B, och växlar på de viset fram och tillbaka
+**        [2] Parallelism innebär att man faktist kör både A och B fast på olika CPU's
+
+***    Concurrency is about __dealing__ with a lots of thigs at once
+***    Parallelism is about __doing__ lots of things at once
+
+* [ Amdahl's Law ]
+:::    Tells us how much we actually can speed up a task
+:::    Formula: SpeedUp(N) =  1/(S + P/N) where S+P=1
+***    S = Can not paralize
+***    P = Can paralize
+:::    N = Core count
+:::    SpeedUp(N) = N - S*(N-1) where S is a fraction
+
+* [ Race Conditions ]
+:::    T2 läser in delad resurs(=value) innan T1 har skrivit transformerat value
+***    Lösning: Critical Regions - Blockar andra från att använda den delade resursen
+
+* [ Mutex ]
+**        [1] m.h.a. mutex kan T1 låsa "låset", då kan ingen annan tråd anropa den delade resursen för att den är låst
+:::    mutex_lock, mutex_trylock, mutex_unlock
+***    Atomic Instruction: En instruktioner som gör två saker samtidigt utan att någon annan kärna kan göra något med det
+:::    Högst prioritet som väntar i kön på att få låset är den som får locka upp först
+:::    Går ej att två trådar försöker accessa exakt samtidigt, isf fixar processorn det intärnt
+
+* [ Deadlock ]
+:::    definition `Deadlock`: Låsen fastnar, lås A väntar på B, men B väntar på A, väntar för alltid
+
+* [ Cache Memory ]
+:::    definition `Cache`: Mycket snabbare än RAM (litet)
+***    L1 är på nanosekundnivå, L2 långsammare, osv. (kallas memory access latency)
+
+*     { Write-Policies }
+***    Describes how low in the Cache we should go
+:::    definition `Om två CPU vill skriva på samma minne?`: MESI Cache Coherence Control - solutions
+
+* [ Virtual Memory ]
+***    Dom får en "virtual-memory" som mappar till Physical Memory, men bara en del av Physical Memory
+- (Swap Memory?)
+- (Virtual Memory? - Pros and Cons)
+- (Swap Disk?)
+
+
+
+
+
