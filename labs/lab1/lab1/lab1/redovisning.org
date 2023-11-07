@@ -1,0 +1,51 @@
+* FRÅGA 1: Conceptual Understanding
+** What is the primary purpose of pthread_create()?
+*** c
+
+* 2. Code Interpretation:
+** How many threads, including the main thread, are running in the program?
+*** c
+
+* 3. Execution Sequence:
+** Which of the following best describes the order of thread completion in the program?
+*** a (if you use join)
+
+* 4. Function Purpose:
+** What is the role of pthread_join() in the code?
+*** a
+
+* 5. Thread Termination:
+** In the printHello function, what does pthread_exit(NULL) do?
+*** c
+
+* Mini exercies:
+** 4 CPU's, 
+** Max Freq: 1.479 Ghz, 
+** ModelName: Cortex-A57
+** Architecture: aarch64
+** Byte order: Little Endian
+** Cache:
+*** L1d (data)        cache:  32K
+*** L1i (instruction) cache:  48K
+*** L2 cache:            2048K
+
+* Exercies A:
+**         std        vec
+** 00    1.553885  0.769244
+** 01    0.685630  0.200093
+** 02    0.534283  0.203975
+** 03    0.497139  0.178087
+
+*** Note: largest jump in performance is between 00 and 01
+***       otherwise the improvement is negligable
+
+* Exercies B:
+** TODO: Redovisningen
+
+* Exercies 3:
+** Question: How many threads should you optimally launch? Why?
+*** 4 Threads. One for each core. Also, each vector consists of 128 bits, 32 bit per paralized subset
+
+** Question: Do you get the speed-up you expected? If not, why?
+*** Yes.., little more than double.
+

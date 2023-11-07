@@ -1,0 +1,126 @@
+* Q1: How much time is spent in running the kernel, copying data from host to device and from 
+*      device to host?
+** ANS1:             Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   95.63%  3.36477s         1  3.36477s  3.36477s  3.36477s  multKernel(int, float*, float*, float*)
+                    2.67%  93.989ms         1  93.989ms  93.989ms  93.989ms  [CUDA memcpy DtoH]
+                    1.70%  59.883ms         2  29.941ms  29.877ms  30.006ms  [CUDA memcpy HtoD]
+    *** Time to run the kernel: 3.36477s
+    *** Time to copy data from host to device: 59.883ms
+    *** Time to copy data from device to host: 93.989ms 
+
+* Q2: Why is the performance so poor? 
+** Because the kernel is run with just 1 block and 1 thread. We did not take advantage of pararellism.
+
+* Q3:
+** How much time is spent in running the kernel, copying data from host to device and from
+** device to host?
+**            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   42.65%  82.945ms         1  82.945ms  82.945ms  82.945ms  [CUDA memcpy DtoH]
+                   31.57%  61.387ms         2  30.693ms  29.708ms  31.679ms  [CUDA memcpy HtoD]
+                   25.78%  50.124ms         1  50.124ms  50.124ms  50.124ms  multKernel(int, float*, float*, float*)
+    *** Time to run the kernel: 50.124ms 
+    *** Time to copy data from host to device: 61.387ms 
+    *** Time to copy data from device to host: 82.945ms
+
+* Q4:
+** How much has the performance improved?
+*** The main improvement was found in the execution time of the kernel: 
+*** ---> 3.36477s/50.124ms ≈ 67.096 which is about a 67x improvement in speed!
+*** Note: The memory copying timers is about almost the same
+
+* Quiz: CUDA Array Multiplication
+
+* Basic Understanding:
+** Given two arrays A and B, both of size N, you launch a kernel with one thread per array
+** element to multiply them. If you launch the kernel with <<<N, 1>>>, what does this
+** configuration imply?
+***** a) There are N blocks and each block has 1 thread.
+*** b) There is 1 block and it has N threads. 
+*** c) There are N blocks and each block has N threads.
+*** d) There is 1 block and it has 1 thread.
+
+* Thread Indexing:
+** If you're using a 1D grid and 1D block configuration for the kernel launch and you wish to
+** compute the global index of a thread in the grid, which of the following formulas would you
+** use?
+*** a) threadIdx.x + blockDim.x
+*** b) blockIdx.x + threadIdx.x
+***** c) blockIdx.x * blockDim.x + threadIdx.x
+*** d) blockDim.x / threadIdx.x
+
+* Race Conditions:
+** In a kernel where each thread writes its result to an output array, how can threadIdx be
+** used to avoid race conditions?
+***** a) By using threadIdx.x to ensure each thread writes to a different memory location.
+*** b) By synchronizing all threads using threadIdx.x after every write operation.
+*** c) By using atomic operations based on threadIdx.x.
+*** d) threadIdx.x cannot be used to avoid race conditions.
+
+* Memory Access:
+** If threads within a block access contiguous memory locations in the arrays A and B during
+** multiplication, this is termed as:
+*** a) Scattered memory access.
+*** b) Strided memory access.
+***** c) Coalesced memory access.
+*** d) Randomized memory access.
+
+* Shared Memory:
+** If you want to load elements of arrays A and B into a faster on-chip memory before
+** performing the multiplication, which memory space in CUDA would you use?
+*** a) Global memory
+*** b) Texture memory
+***** c) Shared memory
+*** d) Constant memory
+
+* Q5:
+** How much time is spent in running the kernel, copying data from host to device and from
+** device to host? Better or worse than before? Why the difference?
+**          Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   69.77%  208.98ms         1  208.98ms  208.98ms  208.98ms  [CUDA memcpy DtoH]
+                   23.07%  69.107ms         2  34.554ms  33.111ms  35.996ms  [CUDA memcpy HtoD]
+                    7.16%  21.435ms         1  21.435ms  21.435ms  21.435ms  multKernel(int, float*, float*, float*)
+** BEFORE:
+    *** Time to run the kernel: 50.124ms 
+    *** Time to copy data from host to device: 61.387ms 
+    *** Time to copy data from device to host: 82.945ms
+** AFTER:
+    *** Time to run the kernel: 21.435ms  
+    *** Time to copy data from host to device: 69.107ms  
+    *** Time to copy data from device to host: 208.98ms 
+** OBSERVATIONS:
+    *** Kernel run-time improved, more total GPU threads are processing task.
+    *** Device to Host memcpy timer increased significally. 
+    ***     Theres now many more blocks to access and copy. (That is not layed out contigously).
+    *** Total time has increased. The performance itself on task T has improved but the overhead
+    ***     from DtoH is too large. If the task T would have required greater computational power,
+    ***     then it would probably be worth the DtoH overhead.
+
+* EX4 BEFORE SHUFFLE
+** ==18199== NVPROF is profiling process 18199, command: ./ex4
+** ==18199== Warning: Unified Memory Profiling is not supported on the underlying platform. System requirements for unified memory can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-requirements
+** Max error: 0
+** ==18199== Profiling application: ./ex4
+** ==18199== Profiling result:
+**             Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   46.92%  96.135ms         3  32.045ms  31.188ms  33.206ms  [CUDA memcpy HtoD]
+                   42.26%  86.573ms         1  86.573ms  86.573ms  86.573ms  [CUDA memcpy DtoH]
+                   10.82%  22.167ms         1  22.167ms  22.167ms  22.167ms  multKernel(int, float*, float*, float*, int*)
+* EX4 AFTER SHUFFLE
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   78.35%  1.16655s         1  1.16655s  1.16655s  1.16655s  multKernel(int, float*, float*, float*, int*)
+                   15.33%  228.32ms         3  76.106ms  73.858ms  78.306ms  [CUDA memcpy HtoD]
+                    6.32%  94.025ms         1  94.025ms  94.025ms  94.025ms  [CUDA memcpy DtoH]
+
+* Q6:
+** How much time is spent in running the kernel, copying data from host to device and from
+** device to host?
+    *** Time to run the kernel: 1.16655s  
+    *** Time to copy data from host to device: 94.025ms  
+    *** Time to copy data from device to host: 228.32ms 
+
+* Q7:
+** Why is the performance so poor now? 
+*** Due to the shuffling of the indecies. The data is now read in a random order.
+*** Each float in the array has an associated memory adress. Instead of just incrementing it
+***     to access the upcoming float, it needs to find the next memory adress using a look-up table.
+***     That adds up to become a lot of extra time when we have 2^24 floats to add.

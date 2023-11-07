@@ -1,0 +1,32 @@
+* [ CUDA ]
+*     { CPU: Host, GPU: Device }
+:::    Unified Memory: Samma minnesadress i DRAM och i GPU Memory:n
+
+* [ GPU Architecture ]
+:::    Pascal Streaming Multiprocesser: FP32/INT32, kör samma instruktioner på 32 data
+:::    RT-core: Retrace Core: Hur strålar, studsar och bryts..
+
+* [ Execution Model ]
+**        [1] Scalar Processor
+**        [2] Multiprocessor runs a warp, 32 threads, all have same instruction
+**        [3] Shared memory kan bara användas för att kommunicera multiprocessorer sinsemellan
+**        [4] Memory Coalescing / Uncoalesced access: hämta i minnet efter varandra eller inte
+
+:::    Texture Cache: Använda den som en lookup table. Om vi har en komplicerad formel, förberäkna, lägg resultat i texture table. 
+:::    Constant Cache: lägga in konstanter, vill ha parameterar ibland i en funktioner, GPU kan då implementera mycket mer effektivt då
+:Problem med Cache Minne: Två delar minne, en får inte skriva över ett värde som ett annat ska läsa från, har vi en konstant vet vi att den ska bara läsas från
+
+* [ Memory Hierarchy ]
+**        [1] blockDim = blockSize 
+**        [2] gridDim = numBlock
+**        [3] blockId = vilken streaming multiprocessor
+**        [4] threadIdx = vilken tråd i en streaming multiprocessor
+
+:::    How many registers per streaming multiprocessor? (64kB)
+:::    How much shared memory per streaming multiprocessor? (64kB)
+
+:::    Pinned Memory: Ger snabbast prestanda mellan host och device memory
+
+
+
+

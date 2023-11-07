@@ -1,0 +1,40 @@
+* [ Memory - Cache ]
+*     { Direct Mapped Cache Fill }
+*     { 2-Way Associative Cache Fill, tar plats från annat i hårdvaru, tar mer kisel, minimerar race conditions }
+
+* [ Virtual Memory ]
+**        [1] Säkerhet, seperarar vilken del av minnet som kan läsas från
+**        [2] Dock kan processer dela på gemensamma virtual memories
+**        [3] MMU fixar mappningen mellan physical and virtual memory address
+
+* [ Pipelining ]
+**        [1] Kör flera processer
+**        [2] Latch: Ett register som när klockan kommer flyttas resultaten från Part1 och skickar det till Part2
+**        [3] 
+
+*     { EXAMPLE }
+:::    T = 5ns, N = 5, Toh = 0.2ns
+** Q1: 5 + 0.2 = 5.2ns, clock_freq = 1/(5.2ns) = 192.3MHz
+** Q2: 1 + 0.2 = 1.2ns per PART, clock_freq=1/(1.2ns) = 833.33 MHz
+** Speedup: 833.33/192.3 = 4.33 times speed-up
+** Q3: IPCs (instructionsPerCycle)
+
+* [ 5 Stages of Pipelining ]
+**        [1] Instruction Fetch 
+**        [2] Decode Instruction
+**        [3] Execute Instruction
+**        [4] Memory Access
+**        [5] Writeback To Registers
+
+*     { Instruction Fetch }
+**        [1] PC innehåller minnesadress som vi vill läsa instruktionen ifrån
+**        [2] PC + 4, lägger på fyra bytes, 32 bitars processer, hoppas till nästa bit
+**        [3] ALU: Arithmetic Logic Unit (multiplikation, addition, shifts)
+
+* [ RISC-V ]
+- En processor-aktiektur som: Innehåller dom 5 stegen
+
+* FEL
+**        [1] Structural Hazards: Multiple instructions compete for the same resource
+**        [2] Data Hazards: : A dependent instruction cannot proceed because it needs a value that hasn’t been produced
+**        [3] Control Hazards: The next instruction cannot be fetched because the outcome of an earlier branch is unknown

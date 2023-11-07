@@ -1,0 +1,12 @@
+nvcc ex1.cu -o ex1
+sudo /usr/local/cuda/bin/nvprof --print-gpu-summary ./ex1
+
+nvcc ex2.cu -o ex2
+sudo /usr/local/cuda/bin/nvprof --print-gpu-summary ./ex2
+
+nvcc ex3.cu -o ex3
+sudo /usr/local/cuda/bin/nvprof --print-gpu-summary ./ex3
+
+nvcc ex4.cu -o ex4
+sudo /usr/local/cuda/bin/nvprof --print-gpu-summary ./ex4
+                    
