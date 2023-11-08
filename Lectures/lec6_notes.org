@@ -1,0 +1,39 @@
+* CUDA-GDB, CUDA-MEMCHECK
+
+* NVCC: Är som ett filter, kollar vad som körs på grafikkortet och vad som körs på host-pc:n, g++, eller gcc, osv.
+* Just-In-Time compilation: Olika grafikkort har olika prestanda, osv, kompilatorn kan optimera koden utefter själva hårdvaran
+** Flags: -g (host) and -G (device)
+** treat all input flags as cu:  nvcc -x cu
+
+* CUDA-MEMCHECK
+** Checks for memory errors (OOB, misaligned access, illegal instruction, etc)
+** Race Conditions (skriva på samma plats från två ställen, access blir fkued)
+** illegal barriers (synkronisera två trådar så att vi vet att dom kommit ifatt varandra)
+** Uninitialized memory (accessat en minnesadress utan att ha tilldelat något till den)
+
+* NVPROF
+** Compute time in each kernel
+** Compute memory transfer time
+** Collect metrics and events
+** Collect data for NVVP
+
+* CUDA Types
+** __device__ (exec: device, call:device)
+** _global__ (exec: device, call:host)
+** default is __host__ (only executed and only callable on host)
+
+* 2D: Vanligt på bilder
+
+* SMs are SIMD Processors
+** PC (program counter, en instruktioner, körs på flera beräkningsenheter), läggs i IR (instruction register),
+** ALU gör beräkningarna, data som behöver sparas i Shared Memory
+
+* När man kör i 2D: kompilatorn gör om 2D matrisen av trådar, och lägger ut dom i en linjär ordning sen kör dom
+
+* Spara 2D data row-by-row, annars läser processorn data i konstig ordning, ger hög prestanda-hit
+
+* Synchronize thread - kör inte denna tråden tills alla andra har kommit till samma punkt
+
+* GPU Considerations wrt Performance
+
+* DLSS: Beräknar nya värden baserat på en model istället för att vänta på att nya värden ska hämtas

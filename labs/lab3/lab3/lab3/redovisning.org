@@ -1,0 +1,94 @@
+* [ Exercies 1 ]
+
+* Q1: What is the purpose of the videoSource object:
+** The videoSource object is responsible for capturing video frames from a source, 
+** such as from a camera. It provides an interface to retrieve image data from 
+** the source and handles the input stream. 
+
+* Q2: What is the purpose of the videoOutput object:
+** The videoOutput object is used for displaying video frames or rendering them to
+** an output, which could be a window or another display device. It's responsible for 
+** rendering the image data obtained from the videoSource. 
+
+* Q3: What frame rate and image size are reported when running the application:
+** 30 FPS and 1280(width)x720 (height)
+***  -- width:      1280
+***  -- height:     720
+***  -- frameRate:  30
+
+* Q4: Where is the captured image stored:
+** The captured image is stored in the image variable, which is a pointer to the image data. 
+** The image data is dynamically allocated and is pointed to by this pointer. The actual memory 
+** location where the image is stored is managed by the videoSource object when it captures a 
+** frame. It is stored in the "image" variable.
+
+* Q5: In what format is each pixel stored:
+** uchar3, representing the three RBG colors. 
+
+* Q6: How much memory is needed per pixel:
+** Each pixel requires 3 bytes (24 bits) of memory.
+
+* Q7: How much memory is needed for the entire image:
+** Total memory = Image width x Image height x Bytes per pixel
+**     1280*720*3 = 2.7648 megabytes ≈ 2.8 MBytes
+
+* Q8: What is the name of the CUDA kernel, and what do you think is the purpose of it:
+** ==7764== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   72.15%  1.21606s       381  3.1917ms  1.7766ms  9.4631ms  void NV12ToRGB<uchar3>(unsigned int*, unsigned long, uchar3*, unsigned long, unsigned int, unsigned int)
+                   14.29%  240.85ms       762  316.08us  113.91us  604.28us  [CUDA memcpy AtoD]
+                   13.56%  228.54ms       381  599.85us  321.31us  854.59us  [CUDA memcpy HtoD]
+** To Convert from NV12 to RGB. Nvidia Video 12, U and V components are horizontally subsampled by a factor of 2.
+** For every 2x2 block of luminance (Y) samples, there is a single U sample and a single V sample. 
+** Luminance (Y) and Chrominance (UV) 
+** Subsampled: meaning that the color information is not stored for every pixel but is instead 
+**     shared between multiple pixels. This is done to reduce memory and bandwidth usage.
+
+* Q9: In average, how much time does it consume?
+** 3.1917ms
+
+* Q10: As you have seen in the code our image buffer is using the type uchar3.
+* Try to change the type to uchar4 and rerun the profiling.
+* In average, how much time does it consume now?
+** ==8182== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   60.50%  431.54ms       233  1.8521ms  1.1867ms  8.6344ms  void NV12ToRGB<uchar4>(unsigned int*, unsigned long, uchar4*, unsigned long, unsigned int, unsigned int)
+                   21.96%  156.63ms       233  672.22us  427.56us  1.1368ms  [CUDA memcpy HtoD]
+                   17.54%  125.11ms       466  268.48us  114.48us  605.32us  [CUDA memcpy AtoD]
+** 1.8521ms
+
+* Q11: Try to explain any differences from before:
+** The uchar3 version produces RGB data where each component (R, G, and B) is represented as 
+** an 8-bit value. In contrast, the uchar4 version produces RGB data with an additional alpha 
+** channel (transparency), so each pixel has four components: R, G, B, and A, each represented 
+** as an 8-bit value. Intuitively I would guess that it actually would take more time, although,
+** it must instead be optimized in such a way that it takes less. 
+
+** uchar3 has odd size to save adress, not efficient for threads to read from odd adresses.
+** non-aligned adress, adresses should be aligned with 32 bus adresses. 
+
+* Q12: Does the image consume more or less memory after the type-change?
+** before: [cuda]   allocated 4 ring buffers (2764800 bytes each, 11059200 bytes total)
+** after: [cuda]   allocated 4 ring buffers (3686400 bytes each, 14745600 bytes total)
+** Consumes more memory afterwards (logical since we added the alpha parameter)
+
+* [ Exercies 2 ]
+
+* Q1: What is A in this context?
+** transparency
+
+* Q2: For our application right now, is it of any use? 
+** Not really, we don't want to set any transparency
+
+* Q3: What is your best performance?
+**          Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   41.93%  143.62ms        96  1.4960ms  1.3276ms  2.1385ms  void NV12ToRGB<uchar4>(unsigned int*, unsigned long, uchar4*, unsigned long, unsigned int, unsigned int)
+                   29.67%  101.63ms        96  1.0586ms  887.32us  4.4204ms  rgb2grayKernel(uchar4*, int, int)
+                   15.72%  53.827ms        96  560.70us  491.03us  686.52us  [CUDA memcpy HtoD]
+                   12.68%  43.447ms       192  226.29us  130.69us  446.55us  [CUDA memcpy AtoD]
+CONSUMER: Done Success
+** 872.91us, 1.0461m 16x16 - winner 
+** 4.1885ms: 12x8
+** 1.7391ms: 16x10
+** 3.8650ms: 22x16
+** 1.1493ms: 16x32
