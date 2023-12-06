@@ -1,0 +1,43 @@
+* [ Hårdvara ]
+
+* [ Databus ]
+**        [1] Adressbuss vart i minnet datan ligger
+**        [2] Databuss: innehållet
+**        [3] Controllbus, check errs
+
+* [ Data busses in a PC ]
+*     { PCI Express }
+:::    Serial also, just more pararell
+
+*     { USB Serial }
+
+* [ Old busses ]
+:::    definition `AGP Chipset`: Connect to GPU
+
+* [ Clock Scew ]
+
+* [ Differential Signal ]
+:::    P-ledare och N-Ledare, Positivt och negativ ledare, relativt jord är irrelevant
+***    Kan få mycket lägre spänning och köra klockan mycket snabbare
+
+*     { PCI Host / PCI Express ontroller (controlls several lanes) }
+:::    Controll PCI(e) devices.
+
+* [ AC Coupled Channel ]
+** Impedans och Kapacitans är konstant, jämn karaktäristisk impedans
+
+* [ LVDS - Differential Signaling ]
+** Kolla vilken som är störst, skicka baserat på det 1 (+400mV) eller 0 (-400mV)
+
+* [ Embedded clock signal into bitstream ]
+** Kodar om 8 bitar till 10 bitar.
+
+* Data och klocka på samma ledare -> kan öka till många gigahertz
+
+*     { NVMe (Non-volatile-memory express) }
+*     { SATA }
+
+
+
+
+ 

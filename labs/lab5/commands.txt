@@ -1,0 +1,5 @@
+nvcc ex1.cu -o ex1
+ncu --clock-control=none ./ex1
+
+nvcc ex2.cu -o ex2
+ncu --clock-control=none ./ex2

@@ -1,0 +1,7 @@
+* cudaHostAlloc istället för cudaMalloc pinnar minnet så det inte är virtual minne i gpu:n 
+* och slipper buffer-mellan steg vid memcpy, går 2 ggr snabbare att överföra
+
+* cudastreams: klarar overlapped, kan köra beräkningar samtidigt som överföringar
+
+* cudaGetDeviceCount: ger hur många grafikkort vi har inkopplade
+

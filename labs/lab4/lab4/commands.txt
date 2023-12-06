@@ -1,0 +1,4 @@
+nvcc ex1.cu -o ex1 -l jetson-utils
+./ex1
+
+sudo /usr/local/cuda/bin/nvprof --print-gpu-summary ./ex1

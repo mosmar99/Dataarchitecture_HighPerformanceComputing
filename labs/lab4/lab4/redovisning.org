@@ -1,0 +1,50 @@
+* 1) Datatype
+*    What datatype is necessary for the histogram vector? ______________________
+*    hist_t histogram[256];
+** unsigned int histogram[256];
+
+* 2) How many pixels does the image contain? ______________________
+** 1280*720 = 921600
+
+* 3) What is the maximum and minimum number of occurrences an intensity value can have
+*    in an image? ____________________________________________
+*    (In other words, what is the maximum and minimum values we can find in a histogram)
+** minimum is 0 and maximum is 255, btw min and max pixles
+
+* 4) Sometimes it can be valuable to calculate the histogram for each component (R, G and B) 
+*    in the image. How can that be achieved? __________________________________
+** Answer: To calculate the histogram for each component (R, G, and B), you would need to 
+** iterate through each pixel in the image and separately accumulate the counts for each 
+** intensity level in the red, green, and blue channels. This means maintaining separate 
+** histograms for each color channel.
+
+* 5) How do you prevent race condition when calculating the histogram? ______________________
+** Answer: To prevent a race condition, you can use locks or other synchronization mechanisms to
+** ensure that only one thread or process at a time is updating the histogram. For example, 
+** atomic instructions.
+
+* Bonus: Använd memset
+** memset(histogram_host, 0, 256*sizeof(hist_t));
+
+* nvprof av ex1
+** ==9077== Profiling application: ./ex1
+** ==9077== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   61.50%  332.46ms        81  4.1044ms  3.4007ms  8.4050ms  void NV12ToRGB<uchar4>(unsigned int*, unsigned long, uchar4*, unsigned long, unsigned int, unsigned int)
+                   19.28%  104.22ms        81  1.2867ms  946.04us  5.8578ms  calcHistogramKernel(uchar4*, unsigned int*, int, int)
+                   11.47%  62.021ms        81  765.69us  632.37us  1.1700ms  rgb2grayKernel(uchar4*, uchar4*, int, int)
+                    7.71%  41.702ms        81  514.84us  452.31us  638.57us  [CUDA memcpy DtoD]
+                    0.03%  144.49us        81  1.7830us  1.0940us  6.6680us  [CUDA memcpy DtoH]
+                    0.01%  39.535us        81     488ns     364ns  1.5110us  [CUDA memcpy HtoD]
+
+* nvprof av ex3
+** ==13746== Profiling application: ./ex3
+** ==13746== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   58.98%  263.35ms        64  4.1149ms  3.5680ms  10.229ms  void NV12ToRGB<uchar4>(unsigned int*, unsigned long, uchar4*, unsigned long, unsigned int, unsigned int)
+                   18.75%  83.706ms        64  1.3079ms  1.1175ms  2.6720ms  calcHistogramKernel(uchar4*, unsigned int*, int, int)
+                   11.93%  53.260ms        64  832.18us  763.53us  1.1860ms  rgb2grayKernel(uchar4*, uchar4*, int, int)
+                    7.30%  32.578ms        64  509.02us  462.01us  660.46us  [CUDA memcpy DtoD]
+                    3.01%  13.444ms        64  210.07us  188.71us  286.68us  plotHistogramKernel(uchar4*, unsigned int*, int, int, int)
+                    0.02%  104.38us        64  1.6300us     729ns  3.3860us  [CUDA memcpy DtoH]
+                    0.01%  35.523us        64     555ns     416ns  1.4060us  [CUDA memcpy HtoD]
